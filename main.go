@@ -42,7 +42,7 @@ func main() {
 		fmt.Printf("  \\-----------/            |  \\                     |---------------\n")
 	*/
 	if Args[0] == "READ" {
-		file, err := os.Open(Args[1])
+		file, err := os.Open(Args[2])
 		defer file.Close()
 		if err != nil {
 			fmt.Printf(Red + "[ERROR]File Not Found" + Reset + "\n")
@@ -51,6 +51,12 @@ func main() {
 		if err != nil {
 			fmt.Printf(Red + "[ERROR]Fail To Read File" + Reset + "\n")
 		}
-		fmt.Printf("%x\n", data)
+		if Args[1] == "H" {
+			fmt.Printf("%x\n", data)
+		} else if Args[1] == "S" {
+			fmt.Printf("%s\n", data)
+		}
+		//fmt.Println("----------------Results----------------")
+		fmt.Println("Number of bytes read:", len(data))
 	}
 }
