@@ -35,12 +35,15 @@ func main() {
 	}
 	Args := os.Args[1:]
 	fmt.Printf("/---------------\\          /---------------          /---------------         /---------\\\n")
-	fmt.Printf("|                |          |              |          |                        |          |\n")
-	fmt.Printf("|                           |              /          |                        |          |\n")
-	fmt.Printf("|           ---\\           |_____________/           |---------------         |_________/\n")
-	fmt.Printf("\\             |            |\\                       |                        |\n")
-	fmt.Printf(" \\            |            | \\                      |                        |\n")
-	fmt.Printf("  \\-----------/            |  \\                     |---------------         |\n")
+	fmt.Printf("|               |          |              |          |                        |         |\n")
+	fmt.Printf("|                          |              /          |                        |         |\n")
+	fmt.Printf("|          ---\\            |_____________/           |---------------         |________/\n")
+	fmt.Printf("\\             |            |\\                        |                        |\n")
+	fmt.Printf(" \\            |            | \\                       |                        |\n")
+	fmt.Printf("  \\-----------/            |  \\                      |---------------         |\n")
+	fmt.Println("")
+	fmt.Println("")
+	fmt.Println("")
 	if Args[0] == "READ" {
 		file, err := os.Open(Args[2])
 		defer file.Close()
