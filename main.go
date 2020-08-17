@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"runtime"
 )
@@ -46,5 +47,10 @@ func main() {
 		if err != nil {
 			fmt.Printf(Red + "[ERROR]File Not Found" + Reset + "\n")
 		}
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			fmt.Printf(Red + "[ERROR]Fail To Read File" + Reset + "\n")
+		}
+		fmt.Printf("%x\n", data)
 	}
 }
