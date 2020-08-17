@@ -101,5 +101,4 @@ func main() {
 			fmt.Printf("#%v %v:%v  %s\n", i+1, finds[i][0], finds[i][1], findlines[i])
 		}
 	}
-
 }
