@@ -100,5 +100,58 @@ func main() {
 		for i := 0; i < len(finds); i++ {
 			fmt.Printf("#%v %v:%v  %s\n", i+1, finds[i][0], finds[i][1], findlines[i])
 		}
+	} else if Args[0] == "FINDALL" {
+		findAll(Args[1], Args[2])
 	}
+}
+
+func findAll(arg1 string, arg2 string) {
+	dir, err := os.Open(arg1)
+	if err != nil {
+		//fmt.Println(Red + "[ERROR]Failed To Open Directory: " + err + Reset)
+		panic(err)
+	}
+	defer dir.Close()
+	list, _ := dir.Readdirnames(0)
+	finds := [][]int{}
+	findlines := []string{}
+	findfiles := []string{}
+	for _, name := range list {
+		fmt.Printf("\nprocessing file " + name + "\n")
+		file, err := os.Open(name)
+		linetip := bufio.NewScanner(file)
+		var lines int = 0
+		re := regexp.MustCompile(arg2)
+		cont := false
+		for {
+			if linetip.Scan() == false {
+				err = linetip.Err()
+				if err == nil {
+					break
+				} else {
+					//fmt.Printf(Red + "[ERROR]Fail To Scan File" + Reset + "\n")
+					fmt.Printf("\nin for loop\n")
+					panic(err)
+				}
+			}
+			if len(re.FindAllIndex([]byte(linetip.Text()), -1)) != 0 {
+				for i := 0; i < len(re.FindAllIndex([]byte(linetip.Text()), -1)); i++ {
+					find := []int{lines, re.FindAllIndex([]byte(linetip.Text()), -1)[i][0]}
+					finds = append(finds, find)
+					findlines = append(findlines, linetip.Text())
+					cont = true
+				}
+
+			}
+			lines++
+			if cont {
+				findfiles = append(findfiles, name)
+			}
+		}
+	}
+	fmt.Println("----------------Results----------------")
+	for i, j := 0, 0; i < len(finds); i, j = i+1, j+1 {
+		fmt.Printf("#%v %v:%v  %s file: %s\n", i+1, finds[i][0], finds[i][1], findlines[i], findfiles[j])
+	}
+
 }
