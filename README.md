@@ -26,7 +26,7 @@ open `Files` And Rename The File `main` in the download directory To `grep`
 
 # Step 4 (OPT) Add `grep` To `PATH`
 
-run this bash script:
+run this shell script:
 ```bash
 export PATH=$PATH:(Download Directory)
 ```
