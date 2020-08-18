@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"runtime"
@@ -101,6 +103,7 @@ func main() {
 			fmt.Printf("#%v %v:%v  %s\n", i+1, finds[i][0], finds[i][1], findlines[i])
 		}
 	} else if Args[0] == "FINDALL" {
+		fmt.Println("----------------Results----------------")
 		findAll(Args[1], Args[2])
 	}
 }
@@ -111,14 +114,35 @@ func findAll(arg1 string, arg2 string) {
 		//fmt.Println(Red + "[ERROR]Failed To Open Directory: " + err + Reset)
 		panic(err)
 	}
+
 	defer dir.Close()
 	list, _ := dir.Readdirnames(0)
 	finds := [][]int{}
 	findlines := []string{}
 	findfiles := []string{}
 	for _, name := range list {
-		fmt.Printf("\nprocessing file " + name + "\n")
-		file, err := os.Open(name)
+		//fmt.Printf("\nprocessing file " + name + "\n")
+
+		fileInfo, err := os.Stat(arg1 + "/" + name)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if fileInfo.IsDir() {
+			//fmt.Println("Preocessing Folder")
+			findAll(arg1+"/"+name, arg2)
+		}
+
+		file, err := os.Open(arg1 + "/" + name)
+		ftype, err := GetFileContentType(file)
+		if err != nil {
+			//log.Fatal(err)
+			continue
+		}
+		if ftype == "application/octet-stream" {
+			//fmt.Println("Skipping binary file")
+			continue
+		}
 		linetip := bufio.NewScanner(file)
 		var lines int = 0
 		re := regexp.MustCompile(arg2)
@@ -129,9 +153,7 @@ func findAll(arg1 string, arg2 string) {
 				if err == nil {
 					break
 				} else {
-					//fmt.Printf(Red + "[ERROR]Fail To Scan File" + Reset + "\n")
-					fmt.Printf("\nin for loop\n")
-					panic(err)
+					fmt.Printf(Red + "[ERROR]Fail To Scan File" + Reset + "\n")
 				}
 			}
 			if len(re.FindAllIndex([]byte(linetip.Text()), -1)) != 0 {
@@ -139,19 +161,31 @@ func findAll(arg1 string, arg2 string) {
 					find := []int{lines, re.FindAllIndex([]byte(linetip.Text()), -1)[i][0]}
 					finds = append(finds, find)
 					findlines = append(findlines, linetip.Text())
-					cont = true
 				}
 
 			}
 			lines++
-			if cont {
-				findfiles = append(findfiles, name)
-			}
+		}
+		if cont {
+			findfiles = append(findfiles, name)
 		}
 	}
-	fmt.Println("----------------Results----------------")
+
 	for i, j := 0, 0; i < len(finds); i, j = i+1, j+1 {
 		fmt.Printf("#%v %v:%v  %s file: %s\n", i+1, finds[i][0], finds[i][1], findlines[i], findfiles[j])
 	}
 
+}
+
+/**
+This is comment
+**/
+func GetFileContentType(out *os.File) (string, error) {
+	buffer := make([]byte, 512)
+	_, err := out.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+	contentType := http.DetectContentType(buffer)
+	return contentType, nil
 }
