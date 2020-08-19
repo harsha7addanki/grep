@@ -161,18 +161,35 @@ func findAll(arg1 string, arg2 string) {
 					find := []int{lines, re.FindAllIndex([]byte(linetip.Text()), -1)[i][0]}
 					finds = append(finds, find)
 					findlines = append(findlines, linetip.Text())
+					cont = true
 				}
 
 			}
 			lines++
 		}
 		if cont {
+			//fmt.Print("add")
 			findfiles = append(findfiles, name)
 		}
 	}
 
 	for i, j := 0, 0; i < len(finds); i, j = i+1, j+1 {
-		fmt.Printf("#%v %v:%v  %s file: %s\n", i+1, finds[i][0], finds[i][1], findlines[i], findfiles[j])
+		//fmt.Printf("#%v %v:%v  %s file: %s\n", i+1, finds[i][0], finds[i][1], findlines[i], findfiles[j])
+		fmt.Print("#")
+		fmt.Print(i + 1)
+		fmt.Print("    ")
+		fmt.Print("file: ")
+		if j >= len(findfiles) {
+			j = 0
+		}
+		fmt.Print(findfiles[j])
+		fmt.Print("   ")
+		fmt.Print(finds[i][0])
+		fmt.Print(":")
+		fmt.Print(finds[i][1])
+		fmt.Print("    ")
+		fmt.Println(findlines[i])
+
 	}
 
 }
